@@ -1,0 +1,16 @@
+node_modules/
+npm-debug.log*
+.env
+.DS_Store
+Thumbs.db
+
+# Base de datos local (el esquema se crea solo al arrancar)
+*.db
+*.db-wal
+*.db-shm
+
+# Binarios de SQLite CLI (son binarios de plataforma, ~8MB)
+sqlite3
+sqldiff
+sqlite3_analyzer
+sqlite3_rsync

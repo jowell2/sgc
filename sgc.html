@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SGC — Sistema Gestor de Calificaciones Académicas</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #1a365d;
+      --primary-l: #2b6cb0;
+      --accent: #c53030;
+      --bg: #f4f6f9;
+      --card: #fff;
+      --text: #1a202c;
+      --text2: #4a5568;
+      --text3: #718096;
+      --border: #d2d6dc;
+      --ok: #276749;
+      --ok-bg: #c6f6d5;
+      --fail: #9b2c2c;
+      --fail-bg: #fed7d7;
+      --proc-bg: #bee3f8;
+      --proc: #2a4365;
+    }
+
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--primary);
+      color: #fff;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--primary-l);
+    }
+    .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+    .header small { opacity: 0.7; font-size: 12px; }
+
+    /* ===== NAV ===== */
+    .nav {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      padding: 0 16px;
+    }
+    .nav-btn {
+      background: none; border: none;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: 0.15s;
+    }
+    .nav-btn:hover { color: var(--primary); background: #f7fafc; }
+    .nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+    /* ===== MAIN ===== */
+    .main { max-width: 1000px; margin: 0 auto; padding: 24px; }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header { margin-bottom: 20px; }
+    .page-header h2 { font-size: 20px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .page-header p { color: var(--text3); font-size: 13px; margin-top: 4px; }
+
+    /* ===== CARDS ===== */
+    .form-card, .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .form-card h3, .table-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+
+    /* ===== FORMS ===== */
+    .form-row { display: flex; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+    .form-row .form-group { flex: 1; min-width: 200px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label {
+      font-size: 12px; font-weight: 600; color: var(--text2);
+      margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .form-group input, .form-group select {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-l);
+      box-shadow: 0 0 0 2px rgba(43,108,176,0.15);
+    }
+    .form-note { font-size: 12px; color: var(--text3); font-style: italic; margin-bottom: 12px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 8px 20px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: 0.15s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-primary:hover { background: var(--primary-l); }
+    .btn-secondary { background: #edf2f7; color: var(--text); }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: var(--fail); color: #fff; border-color: var(--fail); }
+    .btn-danger:hover { background: #742a2a; }
+    .btn-sm { padding: 4px 12px; font-size: 12px; }
+    .btn-link {
+      background: none; border: none; padding: 0; cursor: pointer;
+      color: var(--primary-l); font-size: 13px; font-weight: 600;
+      text-decoration: underline; font-family: inherit;
+    }
+    .btn-link:hover { color: var(--primary); }
+
+    /* ===== TABLES ===== */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: #edf2f7; }
+    th {
+      padding: 10px 12px; text-align: left; font-weight: 600;
+      color: var(--text2); font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px;
+      border-bottom: 2px solid var(--border);
+    }
+    td { padding: 8px 12px; border-bottom: 1px solid #edf2f7; }
+    tr:hover { background: #f7fafc; }
+    .center { text-align: center; }
+
+    /* ===== CAL INPUT TABLE ===== */
+    .cal-input {
+      width: 80px; padding: 6px 8px; text-align: center; font-weight: 600;
+      border: 1px solid var(--border); border-radius: 4px; font-size: 14px;
+    }
+    .cal-input:focus { border-color: var(--primary-l); outline: none; box-shadow: 0 0 0 2px rgba(43,108,176,0.15); }
+    .cal-input.cal-aprob { border-color: var(--ok); background: #f0fff4; }
+    .cal-input.cal-reprob { border-color: var(--fail); background: #fff5f5; }
+    .cal-summary {
+      padding: 12px 16px; background: #edf2f7; border-radius: 4px; margin-top: 12px;
+      font-size: 13px; color: var(--text2);
+    }
+    .cal-summary strong { color: var(--primary); }
+
+    /* ===== BADGES ===== */
+    .badge-ok, .badge-fail, .badge-proc {
+      display: inline-block; padding: 2px 10px; border-radius: 12px;
+      font-size: 12px; font-weight: 600;
+    }
+    .badge-ok { background: var(--ok-bg); color: var(--ok); }
+    .badge-fail { background: var(--fail-bg); color: var(--fail); }
+    .badge-proc { background: var(--proc-bg); color: var(--proc); }
+
+    /* ===== STATS ===== */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 20px; text-align: center;
+    }
+    .stat-n { font-size: 28px; font-weight: 700; color: var(--primary); }
+    .stat-l { font-size: 12px; color: var(--text3); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+    .center-actions { text-align: center; margin-top: 12px; }
+
+    /* ===== REPORT CARDS ===== */
+    .report-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 28px 32px; margin-bottom: 20px;
+    }
+    .boletin-card { border: 2px solid var(--primary); }
+    .report-title {
+      font-size: 16px; font-weight: 700; text-align: center; text-transform: uppercase;
+      color: var(--primary); letter-spacing: 1px; margin-bottom: 4px;
+    }
+    .report-subtitle {
+      font-size: 14px; font-weight: 600; text-align: center; color: var(--text2);
+      margin-bottom: 20px; text-transform: uppercase;
+    }
+    .report-meta { margin-bottom: 20px; padding: 12px 16px; background: #f7fafc; border-radius: 4px; }
+    .meta-row { display: flex; gap: 12px; margin-bottom: 4px; font-size: 13px; }
+    .meta-label { font-weight: 600; color: var(--text2); min-width: 120px; }
+    .report-table { margin-bottom: 16px; }
+    .report-table th { background: #edf2f7; }
+    .report-footer {
+      padding: 14px 16px; background: #f7fafc; border-radius: 4px;
+      font-size: 13px; color: var(--text2); border-top: 2px solid var(--border);
+    }
+    .report-footer p { margin-bottom: 4px; }
+    .report-footer strong { color: var(--primary); }
+
+    /* ===== INFO ===== */
+    .info-line { font-size: 14px; color: var(--text2); margin: 12px 0; padding: 8px 12px; background: #ebf8ff; border-radius: 4px; border-left: 3px solid var(--primary-l); }
+    .empty { color: var(--text3); font-style: italic; padding: 16px 0; text-align: center; }
+    .error { color: var(--fail); padding: 12px 0; font-weight: 500; text-align: center; }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed; top: 16px; right: 16px; z-index: 9999;
+      padding: 12px 20px; border-radius: 6px; color: #fff;
+      font-size: 13px; font-weight: 600; transform: translateX(120%);
+      transition: transform 0.3s; max-width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    #toast.show { transform: translateX(0); }
+    #toast.ok { background: var(--ok); }
+    #toast.error { background: var(--fail); }
+
+    /* ===== LOGIN ===== */
+    .login-overlay {
+      display: flex; align-items: center; justify-content: center;
+      min-height: calc(100vh - 60px); padding: 24px;
+    }
+    .login-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 40px 36px; width: 100%; max-width: 420px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .login-title {
+      text-align: center; font-size: 16px; font-weight: 700; color: var(--primary);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .login-subtitle {
+      text-align: center; font-size: 12px; color: var(--text3); margin-bottom: 28px;
+    }
+    .login-box .form-group { margin-bottom: 16px; }
+    .login-box .form-group label { font-size: 13px; text-transform: none; letter-spacing: 0; }
+    .login-box .form-group input {
+      width: 100%; padding: 10px 12px; font-size: 14px;
+    }
+    .login-box .btn { width: 100%; padding: 11px; font-size: 14px; margin-top: 8px; }
+    .login-error {
+      color: var(--fail); font-size: 12px; text-align: center; margin-top: 12px;
+      min-height: 18px;
+    }
+    .login-footer {
+      text-align: center; font-size: 11px; color: var(--text3); margin-top: 20px;
+      border-top: 1px solid #edf2f7; padding-top: 16px;
+    }
+
+    /* ===== USER BAR ===== */
+    .user-bar {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-bar .user-name {
+      font-size: 13px; color: rgba(255,255,255,0.85);
+    }
+    .user-bar .user-role {
+      font-size: 11px; background: rgba(255,255,255,0.15); padding: 2px 8px;
+      border-radius: 10px; color: #fff;
+    }
+    .btn-logout {
+      background: none; border: 1px solid rgba(255,255,255,0.3); color: #fff;
+      padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;
+      font-family: inherit; font-weight: 500;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.1); }
+
+    /* ===== FORM PANEL (documento-style) ===== */
+    .form-panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      overflow: hidden; margin-bottom: 20px;
+    }
+    .form-panel-header {
+      background: var(--primary); color: #fff; text-align: center;
+      padding: 12px 16px; font-size: 14px; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .form-panel-body { padding: 24px 28px; }
+    .form-section { margin-bottom: 22px; }
+    .form-section:last-of-type { margin-bottom: 8px; }
+    .form-section-title {
+      font-size: 13px; font-weight: 700; color: var(--primary);
+      border-left: 3px solid var(--primary-l); padding-left: 8px;
+      margin-bottom: 14px; text-transform: none;
+    }
+    .badge-auto {
+      display: inline-block; font-size: 10px; font-weight: 600;
+      background: var(--proc-bg); color: var(--proc);
+      padding: 1px 8px; border-radius: 10px; margin-top: 4px;
+      text-transform: none; letter-spacing: 0.2px;
+    }
+    .form-panel-footer {
+      padding: 16px 28px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px;
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+      .no-print { display: none !important; }
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area {
+        position: absolute; left: 0; top: 0; width: 100%;
+        border: 1px solid #000; box-shadow: none; margin: 0;
+      }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .header { padding: 12px 16px; }
+      .header h1 { font-size: 15px; }
+      .main { padding: 16px; }
+      .form-row { flex-direction: column; gap: 10px; }
+      .form-row .form-group { min-width: 100%; }
+      .form-card, .table-card, .report-card { padding: 16px; }
+      .form-panel-body { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>SISTEMA GESTOR DE CALIFICACIONES</h1>
+    <div class="user-bar" id="user-bar" style="display:none;">
+      <span class="user-name" id="user-name-display"></span>
+      <span class="user-role" id="user-role-display"></span>
+      <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+    <small id="header-subtitle">SGC — Académico</small>
+  </div>
+  <div id="login-screen"></div>
+  <div id="app-wrapper" style="display:none;">
+    <nav class="nav" id="main-nav"></nav>
+    <div class="main" id="main-content"></div>
+  </div>
+  <div id="toast"></div>
+  <script src="gestor.js"></script>
+</body>
+</html>
+
